@@ -1,0 +1,154 @@
+{
+  "name": "NIAT Post-Voice Call Processing Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "voice-post-call",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "1",
+      "name": "Gnani Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "niat-gnani-post-call"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.headers['x-webhook-secret'] }}",
+              "value2": "={{ $env.GNANI_API_KEY }}"
+            }
+          ]
+        }
+      },
+      "id": "2",
+      "name": "Verify Shared Secret",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "model": "={{ $env.TOKEN_FACTORY_MODEL || 'gpt-4o' }}",
+        "prompt": "=You are an expert counselor assistant. Summarize this post-call voice transcript from a parent inquiring about NIAT into a concise, 3-bullet note.\n\nTranscript: {{ $json.body.transcript }}\nLanguage: {{ $json.body.language }}\nDuration: {{ $json.body.duration }}s\n\nReturn JSON with keys: 'summary' (string) and 'primary_objection' (one of: fees, placement_anxiety, is_niat_a_real_college, campus_location, hostel_safety, academic_pressure, comparison_btech, timing_payment, trust_credibility).",
+        "temperature": 0.2
+      },
+      "id": "3",
+      "name": "Token Factory Summarizer",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [680, 240]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "table": "leads",
+        "updateKey": "session_id",
+        "columns": "voice_call_done, call_summary, objection_category",
+        "values": {
+          "session_id": "={{ $('Gnani Webhook Trigger').item.json.body.session_id }}",
+          "voice_call_done": true,
+          "call_summary": "={{ $json.summary }}",
+          "objection_category": "={{ $json.primary_objection }}"
+        }
+      },
+      "id": "4",
+      "name": "Supabase Update Lead",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [900, 240]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "table": "outbox",
+        "columns": "phone, message_type, message_text",
+        "values": {
+          "phone": "={{ $('Gnani Webhook Trigger').item.json.body.phone }}",
+          "message_type": "call_confirmation",
+          "message_text": "=Hi, thank you for speaking with our AI counselor. We have updated your file with your preference regarding {{ $json.primary_objection }}. A senior counselor will follow up if requested."
+        }
+      },
+      "id": "5",
+      "name": "Supabase Insert Outbox",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [1120, 240]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"status\": \"processed\",\n  \"session_id\": \"={{ $('Gnani Webhook Trigger').item.json.body.session_id }}\"\n}",
+        "options": {}
+      },
+      "id": "6",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1340, 240]
+    }
+  ],
+  "connections": {
+    "Gnani Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Verify Shared Secret",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify Shared Secret": {
+      "main": [
+        [
+          {
+            "node": "Token Factory Summarizer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Token Factory Summarizer": {
+      "main": [
+        [
+          {
+            "node": "Supabase Update Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Update Lead": {
+      "main": [
+        [
+          {
+            "node": "Supabase Insert Outbox",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Insert Outbox": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

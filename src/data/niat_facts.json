@@ -1,0 +1,35 @@
+{
+  "program": {
+    "full_name": "NxtWave Institute of Advanced Technologies",
+    "short_name": "NIAT",
+    "type": "4-year industry upskilling program for 12th-pass students",
+    "source_url": "https://www.niatindia.com",
+    "duration": "4 years",
+    "degree_note": "The university degree is awarded by NIAT's collaborating university, not by NxtWave. NIAT provides the industry-oriented upskilling layer on top of the degree curriculum.",
+    "placement_note": "NIAT provides placement support and access to NxtWave's hiring ecosystem. Outcomes depend on student performance and market conditions. Placement is not guaranteed.",
+    "nat_note": "NAT (NxtWave Aptitude Test) is an independent assessment. It is not a university entrance exam."
+  },
+  "campuses": [
+    { "name": "Hyderabad", "state": "Telangana", "source_url": "https://www.niatindia.com" },
+    { "name": "Vijayawada", "state": "Andhra Pradesh", "source_url": "https://www.niatindia.com" },
+    { "name": "Visakhapatnam", "state": "Andhra Pradesh", "source_url": "https://www.niatindia.com" },
+    { "name": "Chennai", "state": "Tamil Nadu", "source_url": "https://www.niatindia.com" },
+    { "name": "Bengaluru", "state": "Karnataka", "source_url": "https://www.niatindia.com" },
+    { "name": "Pune", "state": "Maharashtra", "source_url": "https://www.niatindia.com" }
+  ],
+  "fees": {
+    "note": "TODO_VERIFY",
+    "source_url": "TODO_VERIFY"
+  },
+  "objection_responses": {
+    "fees": "NIAT offers EMI options and scholarship support. A counselor can walk through the exact fee structure for your preferred campus.",
+    "placement_anxiety": "NIAT provides structured placement support and access to NxtWave's hiring network. Results depend on the student's performance and market conditions. We do not guarantee placements.",
+    "is_niat_a_real_college": "NIAT is an upskilling program layered on top of a university degree. Your child earns a recognized degree from the collaborating university, plus NIAT's industry certifications.",
+    "campus_location": "NIAT has campuses across South India. A counselor can help match the right campus to your city and hostel needs.",
+    "hostel_safety": "NIAT campuses have dedicated hostel facilities with security. A counselor can share campus-specific hostel details.",
+    "academic_pressure": "NIAT combines standard university academics with practical industry projects. The curriculum is designed to be challenging but supported.",
+    "comparison_btech": "Unlike a conventional B.Tech, NIAT adds live industry projects, mentorship, and placement support on top of the same university degree.",
+    "timing_payment": "Enrollment timelines and payment schedules can be discussed with a counselor. EMI options are available.",
+    "trust_credibility": "NxtWave has trained a large number of students. NIAT is its residential, degree-integrated program. A counselor can share student testimonials and alumni outcomes."
+  }
+}
