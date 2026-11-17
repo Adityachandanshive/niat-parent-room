@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { runAgent } from "@/lib/agent";
-import { supabaseAdmin } from "@/lib/supabase";
+import { supabaseAdmin, memoryStore } from "@/lib/supabase";
 
 export async function POST(req: NextRequest) {
   try {
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
       `6. next_step — Recommendation to book a 15-minute alignment call with a senior counselor.`,
     ].join("\n");
 
-    // Run agent with tool loop
+    // Run agent with tool loop and resilient fallbacks
     const { reply, trace, toolResults } = await runAgent([
       { role: "user", content: userMessage },
     ]);
@@ -68,49 +68,96 @@ export async function POST(req: NextRequest) {
       objection_category = classifyTool.category;
     }
 
-    // Insert lead
-    const { data: lead, error: leadErr } = await supabaseAdmin
-      .from("leads")
-      .insert({
-        parent_name,
-        child_name,
-        phone,
-        city,
-        campus,
-        budget_range,
-        language: language || "en",
-        primary_concern,
-        objection_category,
-        report_completed: true,
-        report_text: reply,
-        intent_score,
-        session_id,
-      })
-      .select("id")
-      .single();
+    let lead_id = `lead-${Date.now()}`;
 
-    if (leadErr) throw leadErr;
-    const lead_id = lead.id;
+    // Insert lead with graceful fallback
+    try {
+      const { data: lead, error: leadErr } = await supabaseAdmin
+        .from("leads")
+        .insert({
+          parent_name,
+          child_name,
+          phone,
+          city,
+          campus,
+          budget_range,
+          language: language || "en",
+          primary_concern,
+          objection_category,
+          report_completed: true,
+          report_text: reply,
+          intent_score,
+          session_id,
+        })
+        .select("id")
+        .single();
 
-    // Insert objection ledger row
-    await supabaseAdmin.from("objection_ledger").insert({
-      lead_id,
-      objection_category,
-      campus,
-      language: language || "en",
-    });
+      if (!leadErr && lead?.id) {
+        lead_id = lead.id;
+      }
+    } catch (dbErr) {
+      console.warn(
+        `[POST /api/report] DB write fallback: ${(dbErr as Error).message}`,
+      );
+    }
 
-    // Insert outbox message with report link
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-    await supabaseAdmin.from("outbox").insert({
-      lead_id,
+    // Ensure memoryStore has this lead record without duplicating
+    const existingIndex = memoryStore.leads.findIndex((l: any) => l.id === lead_id);
+    const leadRecord = {
+      id: lead_id,
+      parent_name,
+      child_name,
       phone,
-      message_type: "report_link",
-      message_text: `Hi ${parent_name}, your NIAT Decision Report for ${child_name} is ready: ${appUrl}/report/${lead_id}`,
-      delivered: true,
-    });
+      city,
+      campus,
+      budget_range,
+      language: language || "en",
+      primary_concern,
+      objection_category,
+      report_completed: true,
+      report_text: reply,
+      intent_score,
+      session_id,
+      created_at: new Date().toISOString(),
+    };
+    if (existingIndex !== -1) {
+      memoryStore.leads[existingIndex] = leadRecord;
+    } else {
+      memoryStore.leads.unshift(leadRecord);
+    }
 
-    return NextResponse.json({ lead_id, report: reply, trace, session_id });
+    // Insert objection ledger row (non-blocking)
+    try {
+      await supabaseAdmin.from("objection_ledger").insert({
+        lead_id,
+        objection_category,
+        campus,
+        language: language || "en",
+      });
+    } catch {
+      // non-blocking
+    }
+
+    // Insert outbox message with report link (non-blocking)
+    try {
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+      await supabaseAdmin.from("outbox").insert({
+        lead_id,
+        phone,
+        message_type: "report_link",
+        message_text: `Hi ${parent_name}, your NIAT Decision Report for ${child_name} is ready: ${appUrl}/report/${lead_id}`,
+        delivered: true,
+      });
+    } catch {
+      // non-blocking
+    }
+
+    return NextResponse.json({
+      lead_id,
+      report: reply,
+      trace,
+      session_id,
+    });
   } catch (err: unknown) {
     console.error("[POST /api/report]", err);
     const message = err instanceof Error ? err.message : "Internal server error";

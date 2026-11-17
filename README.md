@@ -147,7 +147,7 @@ npm run dev
 
 Visit the core routes:
 - **Parent Intake:** [http://localhost:3000](http://localhost:3000)
-- **Counselor Dashboard:** [http://localhost:3000/dashboard?key=your_dashboard_key](http://localhost:3000/dashboard)
+- **Counselor Dashboard:** [http://localhost:3000/dashboard?key=niat2026admin](http://localhost:3000/dashboard)
 - **WhatsApp Outbox:** [http://localhost:3000/inbox](http://localhost:3000/inbox)
 
 ---

@@ -219,7 +219,7 @@ export default function HomePage() {
                     key={lang.code}
                     type="button"
                     onClick={() => setLocale(lang.code)}
-                    className={`p-3.5 text-left border rounded transition-all flex flex-col justify-between ${
+                    className={`p-3.5 text-left border rounded transition-all flex flex-col justify-between cursor-pointer touch-manipulation active:scale-[0.98] ${
                       locale === lang.code
                         ? 'border-amber-800 bg-amber-50/50 text-amber-950 ring-1 ring-amber-800'
                         : 'border-stone-200 hover:border-stone-400 bg-white text-stone-800'
@@ -234,7 +234,7 @@ export default function HomePage() {
               <button
                 type="button"
                 onClick={() => setStep(1)}
-                className="w-full mt-4 bg-amber-800 hover:bg-amber-900 text-white font-medium py-3 px-4 rounded transition-colors flex items-center justify-center gap-2 text-sm"
+                className="w-full mt-4 bg-amber-800 hover:bg-amber-900 text-white font-medium py-3 px-4 rounded transition-colors flex items-center justify-center gap-2 text-sm cursor-pointer touch-manipulation active:scale-[0.99]"
               >
                 <span>{t(locale, 'intake.continue')}</span>
                 <ArrowRight className="w-4 h-4" />
@@ -313,14 +313,14 @@ export default function HomePage() {
                 <button
                   type="button"
                   onClick={prevStep}
-                  className="w-1/3 border border-stone-300 hover:bg-stone-50 text-stone-700 font-medium py-2.5 px-4 rounded text-sm transition-colors"
+                  className="w-1/3 border border-stone-300 hover:bg-stone-50 text-stone-700 font-medium py-2.5 px-4 rounded text-sm transition-colors cursor-pointer touch-manipulation active:scale-[0.98]"
                 >
                   Back
                 </button>
                 <button
                   type="button"
                   onClick={nextStep}
-                  className="w-2/3 bg-amber-800 hover:bg-amber-900 text-white font-medium py-2.5 px-4 rounded text-sm transition-colors flex items-center justify-center gap-1.5"
+                  className="w-2/3 bg-amber-800 hover:bg-amber-900 text-white font-medium py-2.5 px-4 rounded text-sm transition-colors flex items-center justify-center gap-1.5 cursor-pointer touch-manipulation active:scale-[0.98]"
                 >
                   <span>{t(locale, 'intake.continue')}</span>
                   <ArrowRight className="w-4 h-4" />
@@ -351,7 +351,7 @@ export default function HomePage() {
                       key={c.name}
                       type="button"
                       onClick={() => updateField('campus', c.name)}
-                      className={`p-3 text-left border rounded transition-all ${
+                      className={`p-3 text-left border rounded transition-all cursor-pointer touch-manipulation ${
                         form.campus === c.name
                           ? 'border-amber-800 bg-amber-50/60 text-amber-950 ring-1 ring-amber-800'
                           : 'border-stone-200 hover:border-stone-300 bg-white text-stone-800'
@@ -374,7 +374,7 @@ export default function HomePage() {
                       key={b}
                       type="button"
                       onClick={() => updateField('budget_range', b)}
-                      className={`py-2 px-2.5 text-center text-xs border rounded transition-all font-medium ${
+                      className={`py-2 px-2.5 text-center text-xs border rounded transition-all font-medium cursor-pointer touch-manipulation ${
                         form.budget_range === b
                           ? 'border-amber-800 bg-amber-50/60 text-amber-950 ring-1 ring-amber-800'
                           : 'border-stone-200 hover:border-stone-300 bg-white text-stone-700'
@@ -390,14 +390,14 @@ export default function HomePage() {
                 <button
                   type="button"
                   onClick={prevStep}
-                  className="w-1/3 border border-stone-300 hover:bg-stone-50 text-stone-700 font-medium py-2.5 px-4 rounded text-sm transition-colors"
+                  className="w-1/3 border border-stone-300 hover:bg-stone-50 text-stone-700 font-medium py-2.5 px-4 rounded text-sm transition-colors cursor-pointer touch-manipulation"
                 >
                   Back
                 </button>
                 <button
                   type="button"
                   onClick={nextStep}
-                  className="w-2/3 bg-amber-800 hover:bg-amber-900 text-white font-medium py-2.5 px-4 rounded text-sm transition-colors flex items-center justify-center gap-1.5"
+                  className="w-2/3 bg-amber-800 hover:bg-amber-900 text-white font-medium py-2.5 px-4 rounded text-sm transition-colors flex items-center justify-center gap-1.5 cursor-pointer touch-manipulation"
                 >
                   <span>{t(locale, 'intake.continue')}</span>
                   <ArrowRight className="w-4 h-4" />
@@ -426,7 +426,7 @@ export default function HomePage() {
                       key={c}
                       type="button"
                       onClick={() => updateField('primary_concern', c)}
-                      className={`w-full text-left p-3.5 border rounded transition-all flex items-center justify-between text-sm ${
+                    className={`w-full text-left p-3.5 border rounded transition-all flex items-center justify-between text-sm cursor-pointer touch-manipulation ${
                         isSelected
                           ? 'border-amber-800 bg-amber-50/60 text-amber-950 ring-1 ring-amber-800 font-medium'
                           : 'border-stone-200 hover:border-stone-300 bg-white text-stone-800'
@@ -443,14 +443,14 @@ export default function HomePage() {
                 <button
                   type="button"
                   onClick={prevStep}
-                  className="w-1/3 border border-stone-300 hover:bg-stone-50 text-stone-700 font-medium py-2.5 px-4 rounded text-sm transition-colors"
+                  className="w-1/3 border border-stone-300 hover:bg-stone-50 text-stone-700 font-medium py-2.5 px-4 rounded text-sm transition-colors cursor-pointer touch-manipulation"
                 >
                   Back
                 </button>
                 <button
                   type="button"
                   onClick={nextStep}
-                  className="w-2/3 bg-amber-800 hover:bg-amber-900 text-white font-medium py-2.5 px-4 rounded text-sm transition-colors flex items-center justify-center gap-1.5"
+                  className="w-2/3 bg-amber-800 hover:bg-amber-900 text-white font-medium py-2.5 px-4 rounded text-sm transition-colors flex items-center justify-center gap-1.5 cursor-pointer touch-manipulation"
                 >
                   <span>Review & Generate</span>
                   <ArrowRight className="w-4 h-4" />
@@ -516,7 +516,7 @@ export default function HomePage() {
                   type="button"
                   onClick={prevStep}
                   disabled={loading}
-                  className="w-1/3 border border-stone-300 hover:bg-stone-50 text-stone-700 font-medium py-3 px-4 rounded text-sm transition-colors disabled:opacity-50"
+                  className="w-1/3 border border-stone-300 hover:bg-stone-50 text-stone-700 font-medium py-3 px-4 rounded text-sm transition-colors disabled:opacity-50 cursor-pointer touch-manipulation"
                 >
                   Edit
                 </button>
@@ -524,7 +524,7 @@ export default function HomePage() {
                   type="button"
                   onClick={handleSubmit}
                   disabled={loading}
-                  className="w-2/3 bg-amber-800 hover:bg-amber-900 text-white font-medium py-3 px-4 rounded text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
+                  className="w-2/3 bg-amber-800 hover:bg-amber-900 text-white font-medium py-3 px-4 rounded text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer touch-manipulation"
                 >
                   {loading ? (
                     <span>{t(locale, 'intake.generating')}</span>

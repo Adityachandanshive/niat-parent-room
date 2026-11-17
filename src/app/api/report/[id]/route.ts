@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseAdmin } from "@/lib/supabase";
+import { supabaseAdmin, memoryStore } from "@/lib/supabase";
 
 export async function GET(
   _req: NextRequest,
@@ -8,13 +8,26 @@ export async function GET(
   try {
     const { id } = await params;
 
-    const { data: lead, error } = await supabaseAdmin
-      .from("leads")
-      .select("*")
-      .eq("id", id)
-      .single();
+    let lead: any = null;
 
-    if (error || !lead) {
+    try {
+      const { data, error } = await supabaseAdmin
+        .from("leads")
+        .select("*")
+        .eq("id", id)
+        .single();
+      if (!error && data) {
+        lead = data;
+      }
+    } catch {
+      // Fallback to memoryStore
+    }
+
+    if (!lead) {
+      lead = memoryStore.leads.find((l) => l.id === id);
+    }
+
+    if (!lead) {
       return NextResponse.json(
         { error: "Report not found" },
         { status: 404 },

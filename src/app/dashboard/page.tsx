@@ -443,8 +443,8 @@ export default function DashboardPage() {
                     </td>
                   </tr>
                 ) : (
-                  filteredLeads.map((l) => (
-                    <tr key={l.id} className="hover:bg-stone-50/70 transition-colors">
+                  filteredLeads.map((l, idx) => (
+                    <tr key={`${l.id}-${idx}`} className="hover:bg-stone-50/70 transition-colors">
                       <td className="py-3 px-4">
                         <div className="font-semibold text-stone-900">{l.child_name}</div>
                         <div className="text-stone-500 text-[11px]">
